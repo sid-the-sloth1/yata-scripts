@@ -6,6 +6,7 @@
 // @author       Hardy[2131687]
 // @match        https://www.torn.com/travelagency.php*
 // @match        https://www.torn.com/index.php*
+// @updateURL    https://github.com/sid-the-sloth1/yata-scripts/raw/master/abroad_items.user.js
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
 // @connect      yata.alwaysdata.net
@@ -26,7 +27,7 @@
 	}
 
 
-	//converting timestamp to make Last update time human readable
+	//converting timestamp to make Last update time human readable. Thanks to Pyrit for this function
 	function lastUpdate(seconds) {
 		let time = Date.now()/1000;
 		seconds = Math.floor(time - seconds);
