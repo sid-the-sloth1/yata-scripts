@@ -93,11 +93,13 @@
 			url: "https://yata.alwaysdata.net/bazaar/abroad/import/",
 			onload: function(e) {
 				let text = JSON.parse(e.responseText);
-				if (text.message == "success") {
+                //console.log(e);
+				if (e.statusText == "OK") {
 					msg_box.innerHTML = '<p class="hardy_label">Successfully updated Yata!!</p><button class="hardy_travel_max">Max</button>';
 					console.log(text);
 				} else {
 					msg_box.innerHTML = `<p class="hardy_label">Unable to update Yata. ${text.message}</p><button class="hardy_travel_max">Max</button>`;
+                    //console.log(text);
 				}
 			},
 			onerror: (err) => {
