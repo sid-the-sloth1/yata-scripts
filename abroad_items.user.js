@@ -6,7 +6,7 @@
 // @author       Hardy[2131687]
 // @match        https://www.torn.com/travelagency.php*
 // @match        https://www.torn.com/index.php*
-// @updateURL    https://github.com/sid-the-sloth1/yata-scripts/raw/master/abroad_items.user.js
+// @updateURL    https://raw.githubusercontent.com/sid-the-sloth1/yata-scripts/master/abroad_items.user.js
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
 // @connect      yata.alwaysdata.net
