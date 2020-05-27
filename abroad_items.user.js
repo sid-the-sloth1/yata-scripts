@@ -167,7 +167,7 @@
 
 
 	function getData() {
-		$(".hardy_travel_data_table")[0].innerHTML = '<p class="hardy_label" align="center">Loading data.....</p>';
+		//$(".hardy_travel_data_table")[0].innerHTML = '<p class="hardy_label" align="center">Loading data.....</p>';
 		GM_xmlhttpRequest({
 			method: 'GET',
 			timeout: 20000,
@@ -263,9 +263,9 @@
 	}
 	if (window.location.href.includes("travelagency.php")) {
 		addHtmlBox();
-		document.getElementById("hardy_country_check_mexico").checked = true;
+		//document.getElementById("hardy_country_check_mexico").checked = true;
 		getData();
-        console.log("Creating Mexico table");
+        //console.log("Creating Mexico table");
 		createTable();
 
 	}
