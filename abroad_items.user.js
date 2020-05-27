@@ -170,7 +170,7 @@
 		$(".hardy_travel_data_table")[0].innerHTML = '<p class="hardy_label" align="center">Loading data.....</p>';
 		GM_xmlhttpRequest({
 			method: 'GET',
-			timeout: 15000,
+			timeout: 20000,
 			url: 'https://yata.alwaysdata.net/bazaar/abroad/export/',
 			responseType: 'json',
 			onload: function(e) {
@@ -214,7 +214,11 @@
 				let node = country_boxes[j];
 				if (node.className == "hardy_checkbox" && node.checked) {
 					let first = node.id.split("_")[3].replace("-9", " ");
-					countries.push(titleCase(first));
+					var upperCase = titleCase(first);
+                    if (upperCase == "Uae") {
+                        upperCase = "UAE";
+                    }
+                    countries.push(upperCase);
 				}
 			}
 			//console.log(2);
@@ -261,7 +265,9 @@
 		addHtmlBox();
 		document.getElementById("hardy_country_check_mexico").checked = true;
 		getData();
+        console.log("Creating Mexico table");
 		createTable();
+
 	}
 
 
