@@ -198,7 +198,7 @@
                     let stock = JSON.parse(e.responseText)["stocks"];
                     if (stock.length > 0) {
                         sessionStorage.setItem('hardy_travel_data', e.responseText);
-                        createTable();
+                        setTimeout(createTable, 2500);
                     } else {
                         $(".hardy_travel_data_table")[0].innerHTML = '<p class="hardy_label">The requested data is not currently available. Kindly check again after a few minutes. </p>';
                         sessionStorage.setItem('hardy_travel_data', 'nope');
@@ -241,7 +241,7 @@
                     countries.push(upperCase);
                 }
             }
-            console.log(countries);
+            //console.log(countries);
             let types = [];
             let type_boxes = $("#type_checkboxes")[0].children;
             for (var hj = 0; hj < type_boxes.length; hj++) {
@@ -379,7 +379,7 @@
             createTable();
         } else if (g.target.id == "hardy_refresh") {
             getData();
-            //createTable();
+            createTable();
             console.log("refresh");
         } else if (g.target.id == "hardy_box_header") {
             let box = $(".hardy_travel_items_box")[0];
