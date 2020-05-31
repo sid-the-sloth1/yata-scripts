@@ -152,7 +152,7 @@
 
     //creating function to add HTML to add on Travel Agency page
     function addHtmlBox() {
-        let html1 = '<br><br><div id="hardy_box_header">YATA Abroad Items</div><div class="hardy_travel_items_box"><div style="display:inline-block!important;"><button id="hardy_refresh" style="float:left;">Refresh</button><button id="hardy_save_selections" style="float:right;">Save Selections</button></div><div class="hardy_travel_filters"><div id="show_hide_filter1">Country Filter Options </div><div id="country_checkboxes">';
+        let html1 = '<br><br><div id="hardy_box_header">YATA Abroad Items</div><div class="hardy_travel_items_box"><div style="display:inline-block!important;"><button id="hardy_refresh" style="float:left;">Refresh</button><button id="hardy_save_selections" style="float:right;">Save Selections</button></div><div id="travel_option_msg"></div><div class="hardy_travel_filters"><div id="show_hide_filter1">Country Filter Options </div><div id="country_checkboxes">';
         let html2 = '</div><br><br><div id="show_hide_filter2">Item Types Filter Options</div><div id="type_checkboxes">';
         let html3 = '</div></div><br><br><div class="hardy_travel_data_table", style="overflow-x:auto"></div><br></div><br><br>';
         let array1 = [];
@@ -380,6 +380,7 @@
         } else if (g.target.id == "hardy_refresh") {
             getData();
             createTable();
+            document.getElementById("travel_option_msg").innerHTML = '<p class="hardy_label">Data refreshed</p>';
             console.log("refresh");
         } else if (g.target.id == "hardy_box_header") {
             let box = $(".hardy_travel_items_box")[0];
@@ -416,6 +417,7 @@
             settings.country = country_array_save;
             settings.types = types_save;
             localStorage.setItem("hardy_yata_travel_selections", JSON.stringify(settings));
+            document.getElementById("travel_option_msg").innerHTML = '<p class="hardy_label">Settings Saved</p>';
             console.log("Settings Saved");
         }
 
@@ -439,7 +441,7 @@
 		.hardy_abroad_msg1 {background-color: #cfcfcf; }
 		.hidden_stamps { display : none; }
 		#hardy_refresh { margin: 25px;}
-                #hardy_save_selections { margin-top: 25px; }
+        #hardy_save_selections { margin-top: 25px; }
 		.hardy_travel_max { margin-left: 30px; margin-top: 10px; margin-bottom: 10px;}
 		#show_hide_filter1, #hardy_box_header, #show_hide_filter2 { background-color: #0d0d0d; border: 2px solid #000; border-radius: 0.5em 0.5em 0 0; text-indent: 0.5em; font-size: 18px; color: #ffff; }
 		`);
