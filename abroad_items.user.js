@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Abroad Items Info (Yata API)
 // @namespace    hardy.yata.abroad
-// @version      1.0
+// @version      1.1
 // @description  Updates Yata Database and shows Items on Travel Agency page
 // @author       Hardy[2131687]
 // @match        https://www.torn.com/travelagency.php*
@@ -122,7 +122,7 @@
 				let obj = {};
 				obj.country = document.getElementsByClassName('msg right-round')[1].childNodes[1].childNodes[0].data.substring(0, 3).toLowerCase();
 				obj.client = "Father's Abroad Items Tracker";
-				obj.version = "v1.0";
+				obj.version = "v1.1";
 				obj.author_name = "Father";
 				obj.author_id = 2131687;
 				let item = [];
@@ -329,7 +329,7 @@
 				let span = node.querySelector(".item-info-wrap");
 				let amount = parseInt(span.querySelector(".stock .stck-amount").innerText.replace(/,/g, "").replace(/\s/g, ""));
 				let input_box = span.querySelector(".deal .numb");
-				let box2 = node.children[2].children[0].children[0].children[1];
+				let box2 = node.querySelector(".confirm-buy .confirm-deal .amount-confirm .numb");
 				if (amount >= left) {
 					input_box.value = left;
 					box2.value = left;
