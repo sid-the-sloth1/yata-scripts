@@ -106,6 +106,7 @@
                 }
             },
             onerror: (err) => {
+                console.log(err);
                 msg_box.innerHTML = `<p class="hardy_label">Unable to update Yata. ${err}</p><button class="hardy_travel_max">Max</button>`;
             }
         });
@@ -133,7 +134,7 @@
                 for (var pi = 0; pi < target.length; pi++) {
                     let node = target[pi];
                     let span = node.querySelector(".item-info-wrap");
-                    let id = parseInt(span.querySelector(".item").innerHTML.split("/")[3]);
+                    let id = parseInt(node.querySelector(".details").getAttribute("itemid"));
                     let cost = parseInt(span.querySelector(".cost .c-price").innerText.replace(/,/g, "").replace(/\s/g, "").replace(/\$/g, ""));
                     let amount = parseInt(span.querySelector(".stock .stck-amount").innerText.replace(/,/g, "").replace(/\s/g, ""));
                     let dict = {};
