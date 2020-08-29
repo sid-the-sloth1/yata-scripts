@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Abroad Items Info (Yata API)
 // @namespace    hardy.yata.abroad
-// @version      1.1
+// @version      1.2
 // @description  Updates Yata Database and shows Items on Travel Agency page
 // @author       Hardy[2131687]
 // @match        https://www.torn.com/travelagency.php*
@@ -106,6 +106,7 @@
                 }
             },
             onerror: (err) => {
+                console.log(err);
                 msg_box.innerHTML = `<p class="hardy_label">Unable to update Yata. ${err}</p><button class="hardy_travel_max">Max</button>`;
             }
         });
@@ -125,7 +126,7 @@
                 let obj = {};
                 obj.country = document.getElementsByClassName('msg right-round')[1].childNodes[1].childNodes[0].data.substring(0, 3).toLowerCase();
                 obj.client = "Father's Abroad Items Tracker";
-                obj.version = "v1.1";
+                obj.version = "v1.2";
                 obj.author_name = "Father";
                 obj.author_id = 2131687;
                 let item = [];
@@ -133,7 +134,7 @@
                 for (var pi = 0; pi < target.length; pi++) {
                     let node = target[pi];
                     let span = node.querySelector(".item-info-wrap");
-                    let id = parseInt(span.querySelector(".item").innerHTML.split("/")[3]);
+                    let id = parseInt(node.querySelector(".details").getAttribute("itemid"));
                     let cost = parseInt(span.querySelector(".cost .c-price").innerText.replace(/,/g, "").replace(/\s/g, "").replace(/\$/g, ""));
                     let amount = parseInt(span.querySelector(".stock .stck-amount").innerText.replace(/,/g, "").replace(/\s/g, ""));
                     let dict = {};
