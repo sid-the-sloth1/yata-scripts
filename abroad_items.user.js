@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Abroad Items Info (Yata API)
 // @namespace    hardy.yata.abroad
-// @version      1.1
+// @version      1.2
 // @description  Updates Yata Database and shows Items on Travel Agency page
 // @author       Hardy[2131687]
 // @match        https://www.torn.com/travelagency.php*
@@ -126,7 +126,7 @@
                 let obj = {};
                 obj.country = document.getElementsByClassName('msg right-round')[1].childNodes[1].childNodes[0].data.substring(0, 3).toLowerCase();
                 obj.client = "Father's Abroad Items Tracker";
-                obj.version = "v1.1";
+                obj.version = "v1.2";
                 obj.author_name = "Father";
                 obj.author_id = 2131687;
                 let item = [];
