@@ -147,7 +147,7 @@
                 let obj = {};
                 obj.country = document.getElementsByClassName('msg right-round')[1].childNodes[1].childNodes[0].data.substring(0, 3).toLowerCase();
                 obj.client = "Father's Abroad Items Tracker";
-                obj.version = "v1.2";
+                obj.version = "v1.3";
                 obj.author_name = "Father";
                 obj.author_id = 2131687;
                 let item = [];
