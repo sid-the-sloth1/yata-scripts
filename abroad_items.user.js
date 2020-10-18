@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Abroad Items Info (Yata API)
 // @namespace    hardy.yata.abroad
-// @version      1.2
+// @version      1.3
 // @description  Updates Yata Database and shows Items on Travel Agency page
 // @author       Hardy[2131687]
 // @match        https://www.torn.com/travelagency.php*
@@ -14,10 +14,13 @@
 
 (function() {
     'use strict';
+    var hide_doctorn = true;
+
     //a function to format currency
     function formatNumber(num) {
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
+
     function titleCase(str) {
         var splitStr = str.toLowerCase().split(' ');
         for (var i = 0; i < splitStr.length; i++) {
@@ -25,7 +28,6 @@
         }
         return splitStr.join(' ');
     }
-
 
     //converting timestamp to make Last update time human readable. Thanks to Pyrit for this function
     function lastUpdate(seconds) {
@@ -53,9 +55,10 @@
                 result +
                 `${seconds >= 60 ? " and ": ""}` +
                 `${seconds % 60} second${seconds >= 60 ? "s": ""}`
-			);
+      );
         }
     }
+
     function getUnique(array) {
         var uniqueArray = [];
         for (var value of array) {
@@ -68,18 +71,35 @@
 
     // all item types: ['Temporary', 'Plushie', 'Alcohol', 'Primary', 'Melee', 'Other', 'Clothing', 'Secondary', 'Flower', 'Defensive', 'Drug', 'Electronic', 'Enhancer', 'Medical']
 
+    var itemsAllList = {'items': {'Temporary': {'Claymore Mine': '229', 'Trout': '616', 'HEG': '242', 'Grenade': '220', 'Stick Grenade': '221', 'Throwing Knife': '257', 'Tear Gas': '256', 'Flash Grenade': '222', 'Ninja Stars': '239', 'Fireworks': '246', 'Smoke Grenade': '226'}, 'Plushie': {'Jaguar Plushie': '258', 'Stingray Plushie': '618', 'Wolverine Plushie': '261', 'Red Fox Plushie': '268', 'Nessie Plushie': '266', 'Monkey Plushie': '269', 'Chamois Plushie': '273', 'Panda Plushie': '274', 'Camel Plushie': '384', 'Lion Plushie': '281'}, 'Alcohol': {'Bottle of Tequila': '426', 'Bottle of Saké': '294'}, 'Primary': {'ArmaLite M-15A4 Rifle': '399', '9mm Uzi': '108', 'AK-47': '26', 'SIG 550': '232', 'Minigun': '63', 'M249 PARA LMG': '31', 'Heckler & Koch SL8': '231', 'Tavor TAR-21': '612', 'Ithaca 37': '252', 'Anti Tank': '240', 'Bushmaster Carbon 15 Type 21s': '241', 'Enfield SA-80': '219', 'SIG 552': '398', 'Jackhammer': '223', 'SKS Carbine': '249', 'Gold Plated AK-47': '382', 'Pink Mac-10': '388', 'Mag 7': '225', 'Vektor CR-21': '228'}, 'Melee': {'Samurai Sword': '11', 'Taser': '175', 'Ninja Claws': '111', 'Leather Bullwhip': '110', 'Axe': '8', 'Naval Cutlass': '615', 'Diamond Bladed Knife': '614', 'Ice Pick': '402', 'Cricket Bat': '438', 'Flail': '397', 'Frying Pan': '439', 'Claymore Sword': '217', 'Macana': '391', 'Swiss Army Knife': '224', 'Kodachi Swords': '237', 'Sai': '238', 'Kama': '236', 'Wooden Nunchakus': '235', 'Metal Nunchakus': '395', 'Chain Whip': '234', 'Wushu Double Axes': '251', 'Bo Staff': '245', 'Guandao': '400', 'Katana': '247', 'Twin Tiger Hooks': '250', 'Pillow': '440', 'Handbag': '387', 'Spear': '227', 'Knuckle Dusters': '4'}, 'Other': {'Mayan Statue': '259', 'Yucca Plant': '409', 'Blank Tokens': '327', 'Bolt Cutters': '159', 'Crazy Straw': '432', 'Nodding Turtle': '620', 'Steel Drum': '619', 'Hockey Stick': '262', 'Blank Credit Cards': '328', 'Fire Hydrant': '410', 'Pele Charm': '265', 'Dart Board': '431', 'Ship in a Bottle': '415', 'Sextant': '408', 'Tailors Dummy': '418', 'Paper Weight': '416', 'Model Space Ship': '411', 'Compass': '407', 'Soccer Ball': '270', 'Snowboard': '436', 'Sensu': '433', 'Maneki Neko': '279', 'Sumo Doll': '427', 'Chopsticks': '429', 'Yakitori Lantern': '434', 'Printing Paper': '326', 'Stick of Dynamite': '335', 'Jade Buddha': '275', 'Afro Comb': '406', 'Elephant Statue': '280'}, 'Clothing': {'Trench Coat': '107', 'Wetsuit': '625', 'Speedo': '623', 'Diving Gloves': '626', 'Flippers': '622', 'Bikini': '624', 'Snorkel': '621', 'Mountie Hat': '413', 'Coconut Bra': '430', 'Kabuki Mask': '278', 'Sports Shades': '412', 'Proda Sunglasses': '414'}, 'Defensive': {'Outer Tactical Vest': '50', 'Kevlar Gloves': '640', 'Flak Jacket': '178', 'Safety Boots': '645', 'WWII Helmet': '641', 'Liquid Body Armor': '333', 'Flexible Body Armor': '334', 'Construction Helmet': '643', 'Combat Pants': '652', 'Combat Helmet': '651', 'Combat Gloves': '654', 'Combat Vest': '332', 'Combat Boots': '653'}, 'Secondary': {'Springfield 1911-A1': '99', 'Flare Gun': '230', 'Cobra Derringer': '177', 'Desert Eagle': '20', 'Harpoon': '613', 'Lorcin 380': '253', 'S&W M29': '254', 'Taurus': '243', 'Crossbow': '218', 'Flamethrower': '255', 'BT MP9': '233', 'Blowgun': '244', 'Qsz-92': '248'}, 'Flower': {'Dahlia': '260', 'Banana Orchid': '617', 'Crocus': '263', 'Orchid': '264', 'Heather': '267', 'Ceibo Flower': '271', 'Edelweiss': '272', 'Dozen White Roses': '435', 'Cherry Blossom': '277', 'Peony': '276', 'Tribulus Omanense': '385', 'African Violet': '282'}, 'Drug': {'Ecstasy': '197', 'Cannabis': '196', 'Vicodin': '205', 'PCP': '201', 'Xanax': '206', 'Ketamine': '198', 'Shrooms': '203', 'Speed': '204', 'LSD': '199', 'Opium': '200'}, 'Enhancer': {'Medium Suitcase': '420', 'Small Suitcase': '419', 'Large Suitcase': '421', 'Sports Sneakers': '386'}, 'Medical': {'Neumune Tablet': '361'}, 'Electronic': {'Platinum PDA': '383', 'Gold Laptop': '381'}}};
+
+    function getItemType(arg) {
+        for (let p in itemsAllList["items"]) {
+            for (let k in itemsAllList["items"][p]) {
+                if (itemsAllList["items"][p][k] == arg) {
+                    return p;
+                }
+            }
+        }
+    }
     //Not all item types added to avoid cluttering. But you can add them below in the below array as per requirement
     var type_list = ["Drug", "Flower", "Plushie", "Defensive", "Clothing", "Temporary", "Primary", "Enhancer"];
+
     var country_list = ["Mexico", "Cayman Islands", "Canada", "Hawaii", "United Kingdom", "Argentina", "Switzerland", "Japan", "China", "UAE", "South Africa"];
 
+    var countrylowerList = ['mex', 'cay', 'can', 'haw', 'uni', 'arg', 'swi', 'jap', 'chi', 'uae', 'sou'];
+
     //hiding DoctorN Travel hub and box on abroad and Travel Agency page
-    var hide_doctorn = true;
-    var check_drn = document.querySelectorAll(".doctorn-widgets");
-    if (hide_doctorn && check_drn.length > 0) {
-        check_drn.forEach(e => {
-            e.style.display = "none";
-        });
+    function hideDoctorn() {
+        var hide_doctorn = true;
+        var check_drn = document.querySelectorAll(".doctorn-widgets");
+        if (hide_doctorn && check_drn.length > 0) {
+            check_drn.forEach(e => {
+                e.style.display = "none";
+            });
+        }
     }
+
     var selections = localStorage.getItem("hardy_yata_travel_selections");
     if (typeof selections == "undefined" || selections == null) {
         selections = "none";
@@ -93,10 +113,10 @@
             headers: {
                 "content-type": "application/json",
             },
-            url: "https://yata.alwaysdata.net/bazaar/abroad/import/",
+            url: "https://yata.alwaysdata.net/api/v1/travel/import/",
             onload: function(e) {
                 let text = JSON.parse(e.responseText);
-                //console.log(e);
+                console.log(e);
                 if (e.statusText == "OK") {
                     msg_box.innerHTML = '<p class="hardy_label">Successfully updated Yata!!</p><button class="hardy_travel_max">Max</button>';
                     console.log(text);
@@ -117,6 +137,7 @@
         if ($(".captcha").length == 0 && document.getElementsByClassName('msg right-round').length > 1) {
             let node = document.getElementsByClassName('msg right-round')[1].childNodes[1].childNodes[0].data;
             if (country_list.indexOf(node) != -1) {
+                hideDoctorn();
                 let box = document.createElement("div");
                 box.className = "hardy_abroad_msg1";
                 box.innerHTML = '<div class="delimiter"><div class="hardy_abroad_msg"><button class="hardy_travel_max">Max</button></div></div><br><br>';
@@ -170,7 +191,7 @@
                     checked = " checked";
                 }
             }
-            array1.push(`<input type="checkbox" class="hardy_checkbox" id="hardy_country_check_${country.toLowerCase().replace(/\s/, "-9")}"${checked}><label>${country}</label><br>`);
+            array1.push(`<input type="checkbox" class="hardy_checkbox" id="hardy_country_check_${country.toLowerCase().substring(0, 3)}"${checked}><label>${country}</label><br>`);
         }
         for (var x = 0; x < type_list.length; x++) {
             let type = type_list[x];
@@ -191,19 +212,13 @@
         GM_xmlhttpRequest({
             method: 'GET',
             timeout: 20000,
-            url: 'https://yata.alwaysdata.net/bazaar/abroad/export/',
+            url: 'https://yata.alwaysdata.net/api/v1/travel/export/',
             responseType: 'json',
             onload: function(e) {
                 try {
-                    //console.log(e.responseText);
-                    let stock = JSON.parse(e.responseText)["stocks"];
-                    if (stock.length > 0) {
-                        sessionStorage.setItem('hardy_travel_data', e.responseText);
-                        setTimeout(createTable, 2500);
-                    } else {
-                        $(".hardy_travel_data_table")[0].innerHTML = '<p class="hardy_label">The requested data is not currently available. Kindly check again after a few minutes. </p>';
-                        sessionStorage.setItem('hardy_travel_data', 'nope');
-                    }
+                    sessionStorage.setItem('hardy_travel_data', e.responseText);
+                    setTimeout(createTable, 2500);
+
                 } catch (error) {
                     $(".hardy_travel_data_table")[0].innerHTML = `<p class="hardy_label">${error}</p>`;
                 }
@@ -219,7 +234,6 @@
     }
 
     function createTable() {
-        //console.log("Creating Table");
         let data = sessionStorage.getItem('hardy_travel_data');
         if (typeof data == "undefined" || data == null) {
             getData();
@@ -230,43 +244,46 @@
             let stock = JSON.parse(data)["stocks"];
             let countries = [];
             let country_boxes = $("#country_checkboxes")[0].children;
-            //console.log(country_boxes);
             for (var j = 0; j < country_boxes.length; j++) {
                 let node = country_boxes[j];
                 if (node.className == "hardy_checkbox" && node.checked) {
-                    let first = node.id.split("_")[3].replace("-9", " ");
-                    var upperCase = titleCase(first);
-                    if (upperCase == "Uae") {
-                        upperCase = "UAE";
-                    }
-                    countries.push(upperCase);
+                    let first3Letters = node.id.split("_")[3];
+                    countries.push(first3Letters);
                 }
             }
-            //console.log(countries);
             let types = [];
             let type_boxes = $("#type_checkboxes")[0].children;
             for (var hj = 0; hj < type_boxes.length; hj++) {
                 let nodes = type_boxes[hj];
                 if (nodes.className == "hardy_checkbox" && nodes.checked) {
                     let first = nodes.id.split("_")[3].replace("-9", " ");
-                    types.push(titleCase(first));
+                    let itemType = titleCase(first);
+                    let itemNames = itemsAllList["items"][itemType];
+                    for (let v in itemNames) {
+                        types.push(itemNames[v]);
+                    }
                 }
             }
             let length1 = countries.length;
             let length2 = types.length;
             if (length1 > 0 || length2 > 0) {
                 let array2 = [];
-                for (var pp = 0; pp < stock.length; pp++) {
-                    let item = stock[pp];
-                    if (length1 > 0 && length2 > 0) {
-                        if (countries.indexOf(item["country_name"]) != -1 && types.indexOf(item["item_type"]) != -1) {
-                            let image = `<img src="/images/items/${item["item_id"]}/medium.png", alt = "${item["item_name"]}" > `;
-                            array2.push(`<tr><td>${item["country_name"]}</td><td>${image}</td><td>${item["item_name"]}</td><td>${item["abroad_quantity"]}</td><td>\$${formatNumber(item["abroad_cost"])}</td><td>${item["item_type"]}</td><td>${lastUpdate(item["timestamp"])} ago <p class="hidden_stamps">bitch!${item["timestamp"]}</p></td></tr>`);
-                        }
-                    } else {
-                        if (countries.indexOf(item["country_name"]) != -1 || types.indexOf(item["item_type"]) != -1) {
-                            let image = `<img src="/images/items/${item["item_id"]}/medium.png", alt = "${item["item_name"]}" > `;
-                            array2.push(`<tr><td>${item["country_name"]}</td><td>${image}</td><td>${item["item_name"]}</td><td>${item["abroad_quantity"]}</td><td>\$${formatNumber(item["abroad_cost"])}</td><td>${item["item_type"]}</td><td>${lastUpdate(item["timestamp"])} ago <p class="hidden_stamps">bitch!${item["timestamp"]}</p></td></tr>`);
+                for (let countryId in stock) {
+                    let countryInfo = stock[countryId];
+                    let lastUpdateTime = lastUpdate(countryInfo["update"]);
+                    let itemsInCountryArray = countryInfo["stocks"];
+                    for (let pp = 0; pp < itemsInCountryArray.length; pp++) {
+                        let item = itemsInCountryArray[pp];
+                        if (length1 > 0 && length2 > 0) {
+                            if (countries.indexOf(countryId) != -1 && types.indexOf(String(item["id"])) != -1) {
+                                let image = `<img src="/images/items/${item["id"]}/medium.png", alt = "${item["name"]}" > `;
+                                array2.push(`<tr><td>${country_list[countrylowerList.indexOf(countryId)]}</td><td>${image}</td><td>${item["name"]}</td><td>${item["quantity"]}</td><td>\$${formatNumber(item["cost"])}</td><td>${getItemType(item["id"])}</td><td>${lastUpdateTime} ago <p class="hidden_stamps">bitch!${countryInfo["update"]}</p></td></tr>`);
+                            }
+                        } else {
+                            if (countries.indexOf(countryId) != -1 || types.indexOf(String(item["id"])) != -1) {
+                                let image = `<img src="/images/items/${item["id"]}/medium.png", alt = "${item["name"]}" > `;
+                                array2.push(`<tr><td>${country_list[countrylowerList.indexOf(countryId)]}</td><td>${image}</td><td>${item["name"]}</td><td>${item["quantity"]}</td><td>\$${formatNumber(item["cost"])}</td><td>${getItemType(item["id"])}</td><td>${lastUpdateTime} ago <p class="hidden_stamps">bitch!${countryInfo["update"]}</p></td></tr>`);
+                            }
                         }
                     }
                 }
@@ -283,6 +300,7 @@
         }
     }
     if (window.location.href.includes("travelagency.php")) {
+        hideDoctorn();
         addHtmlBox();
         //document.getElementById("hardy_country_check_mexico").checked = true;
         getData();
@@ -396,11 +414,9 @@
             for (var j = 0; j < country_boxes.length; j++) {
                 let node = country_boxes[j];
                 if (node.className == "hardy_checkbox" && node.checked) {
-                    let first = node.id.split("_")[3].replace("-9", " ");
-                    var upperCase = titleCase(first);
-                    if (upperCase == "Uae") {
-                        upperCase = "UAE";
-                    }
+                    let first = node.id.split("_")[3];
+                    var upperCase = country_list[countrylowerList.indexOf(first)];
+
                     country_array_save.push(upperCase);
                 }
             }
@@ -426,24 +442,24 @@
 
     //adding CSS to page
     GM_addStyle(`
-		.hardy_travel_items_box, .hardy_abroad_msg, #country_checkboxes, #type_checkboxes { border-radius: 8px; background-color: rgb(242, 242, 242); box-shadow: 0px 4px 9px 3px rgba(119, 119, 119, 0.64); -moz-box-shadow: 0px 4px 9px 3px rgba(119, 119, 119, 0.64); -webkit-box-shadow: 0px 4px 9px 3px rgba(119, 119, 119, 0.64); padding. 10px;}
-		.hardy_label { padding: 10px; padding-top: 10px; padding-right: 30px; padding-bottom: 10px; padding-left: 30px; font-size: 18px }
-		.hardy_travel_filters { padding: 10px; margin: auto; width: 85%;}
-		.hardy_travel_data_table {padding: 10px; margin: auto; width: 85%; }
-		.hardy_travel_data_table table { color: #333; font-family: Helvetica, Arial, sans-serif; width: 640px; border: 2px #808080 solid; }
-		.hardy_travel_filters input{ margin-right: 10px; margin-bottom: 4px; margin-left: 10px; margin-top: 3px;}
-		.hardy_travel_filters label{ margin: 0px 3px 0px 3px; }
-		.hardy_travel_data_table td, th { border: 1px solid rgba(0, 0, 0, .55); height: 30px; transition: all 0.3s; }
-		.hardy_travel_data_table th { background: #868282; font-weight: bold; text-align: center; }
-		.hardy_travel_data_table td { background: #c6c4c4; text-align: center; }
-		.hardy_travel_data_table tr:nth-child(even) td { background: #F1F1F1; }
-		.hardy_travel_data_table tr:nth-child(odd) td { background: #c6c4c4; }
-		.hardy_travel_data_table tr td:hover { background: #666; color: #FFF; }
-		.hardy_abroad_msg1 {background-color: #cfcfcf; }
-		.hidden_stamps { display : none; }
-		#hardy_refresh { margin: 25px;}
-        #hardy_save_selections { margin-top: 25px; }
-		.hardy_travel_max { margin-left: 30px; margin-top: 10px; margin-bottom: 10px;}
-		#show_hide_filter1, #hardy_box_header, #show_hide_filter2 { background-color: #0d0d0d; border: 2px solid #000; border-radius: 0.5em 0.5em 0 0; text-indent: 0.5em; font-size: 18px; color: #ffff; }
-		`);
+    .hardy_travel_items_box, .hardy_abroad_msg, #country_checkboxes, #type_checkboxes { border-radius: 8px; background-color: rgb(242, 242, 242); box-shadow: 0px 4px 9px 3px rgba(119, 119, 119, 0.64); -moz-box-shadow: 0px 4px 9px 3px rgba(119, 119, 119, 0.64); -webkit-box-shadow: 0px 4px 9px 3px rgba(119, 119, 119, 0.64); padding. 10px;}
+    .hardy_label { padding: 10px; padding-top: 10px; padding-right: 30px; padding-bottom: 10px; padding-left: 30px; font-size: 18px }
+    .hardy_travel_filters { padding: 10px; margin: auto; width: 85%;}
+    .hardy_travel_data_table {padding: 10px; margin: auto; width: 85%; }
+    .hardy_travel_data_table table { color: #333; font-family: Helvetica, Arial, sans-serif; width: 640px; border: 2px #808080 solid; }
+    .hardy_travel_filters input{ margin-right: 10px; margin-bottom: 4px; margin-left: 10px; margin-top: 3px;}
+    .hardy_travel_filters label{ margin: 0px 3px 0px 3px; }
+    .hardy_travel_data_table td, th { border: 1px solid rgba(0, 0, 0, .55); height: 30px; transition: all 0.3s; }
+    .hardy_travel_data_table th { background: #868282; font-weight: bold; text-align: center; }
+    .hardy_travel_data_table td { background: #c6c4c4; text-align: center; }
+    .hardy_travel_data_table tr:nth-child(even) td { background: #F1F1F1; }
+    .hardy_travel_data_table tr:nth-child(odd) td { background: #c6c4c4; }
+    .hardy_travel_data_table tr td:hover { background: #666; color: #FFF; }
+    .hardy_abroad_msg1 {background-color: #cfcfcf; }
+    .hidden_stamps { display : none; }
+    #hardy_refresh { margin: 25px;}
+    #hardy_save_selections { margin-top: 25px; }
+    .hardy_travel_max { margin-left: 30px; margin-top: 10px; margin-bottom: 10px;}
+    #show_hide_filter1, #hardy_box_header, #show_hide_filter2 { background-color: #0d0d0d; border: 2px solid #000; border-radius: 0.5em 0.5em 0 0; text-indent: 0.5em; font-size: 18px; color: #ffff; }
+    `);
 })();
