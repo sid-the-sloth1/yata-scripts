@@ -15,12 +15,10 @@
 (function() {
     'use strict';
     var hide_doctorn = true;
-
     //a function to format currency
     function formatNumber(num) {
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
-
     function titleCase(str) {
         var splitStr = str.toLowerCase().split(' ');
         for (var i = 0; i < splitStr.length; i++) {
@@ -28,8 +26,6 @@
         }
         return splitStr.join(' ');
     }
-
-
     function sortTable(columnId) {
         let id = columnId;
         let index = id.split("_")[3];
@@ -41,52 +37,41 @@
             tbody.find('tr').sort(function(a, b) {
                 if ($("#"+uid).val() == 'asc') {
                     return $('td:eq('+index+')', a).text().localeCompare($('td:eq('+index+')', b).text());
-                    //header[index].innerText.replace("&#x25B2;", "&#x25BC;");
-
                 } else
                 {
                     return $('td:eq('+index+')', b).text().localeCompare($('td:eq('+index+')', a).text());
-                    //header[index].innerText.replace("&#x25BC;", "&#x25B2;");
                 }
-
             }).appendTo(tbody);
         } else if (index == "6") {
             tbody.find('tr').sort(function(a, b) {
                 if ($("#"+uid).val() == 'asc') {
                     return parseInt($('td:eq('+index+')', a).text().split("bitch!")[1]) - parseInt($('td:eq('+index+')', b).text().split("bitch!")[1]);
-
                 } else
                 {
                     return parseInt($('td:eq('+index+')', b).text().split("bitch!")[1]) - parseInt($('td:eq('+index+')', a).text().split("bitch!")[1]);
-
                 }
-
             }).appendTo(tbody);
-
         } else {
             tbody.find('tr').sort(function(a, b) {
                 if ($("#"+uid).val() == 'asc') {
                     return parseInt($('td:eq('+index+')', a).text().replace(/,/g, "").replace(/\$/, "")) - parseInt($('td:eq('+index+')', b).text().replace(/,/g, "").replace(/\$/, ""));
-
                 } else
                 {
                     return parseInt($('td:eq('+index+')', b).text().replace(/,/g, "").replace(/\$/, "")) - parseInt($('td:eq('+index+')', a).text().replace(/,/g, "").replace(/\$/, ""));
-
                 }
-
             }).appendTo(tbody);
         }
         let sort_order = $('#'+uid).val();
         if (sort_order == "asc") {
             document.getElementById(uid).value = "desc";
             changeHeader(id, "asc");
-            //console.log(id);
         }
         if (sort_order == "desc") {
             document.getElementById(uid).value = "asc";
             changeHeader(id, "desc");
         }
     }
+    
     function changeHeader(columnId, sortOrder) {
         let header = document.querySelector(".table_heading_row");
         header.innerHTML = '<th class="hardy_travel_sortable_header" id="hardy_header_destination_0">Destination &#x25B2;&#x25BC;</th><th>Item</th><th class="hardy_travel_sortable_header" id="hardy_header_item_2">Name &#x25B2;&#x25BC;</th><th class="hardy_travel_sortable_header" id="hardy_header_quantity_3">Quantity &#x25B2;&#x25BC;</th><th class="hardy_travel_sortable_header" id="hardy_header_price_4">Price &#x25B2;&#x25BC;</th><th class="hardy_travel_sortable_header" id="hardy_header_type_5">Type &#x25B2;&#x25BC;</th><th class="hardy_travel_sortable_header" id="hardy_header_stamp_6">Update &#x25B2;&#x25BC;</th>';
@@ -95,31 +80,25 @@
         let text = elem.innerText.split(" ")[0];
         if (sortOrder == "asc") {
             elem.innerHTML = text + ' &#x25BC;';
-
         } else if (sortOrder == "desc") {
             elem.innerHTML = text + ' &#x25B2;';
         }
-
     }
     //converting timestamp to make Last update time human readable. Thanks to Pyrit for this function
     function lastUpdate(seconds) {
         let time = Date.now()/1000;
         seconds = Math.floor(time - seconds);
         let result = "";
-
         if (seconds >= 3600) {
             const hours = Math.floor(seconds / 3600);
             result += `${hours} hour${hours > 1 ? "s": ""}`;
         }
-
         if (seconds >= 60) {
             const minutes = Math.floor((seconds % 3600) / 60);
-
             result +=
                 `${seconds >= 3600 ? " and ": ""}` +
                 `${minutes} minute${minutes > 1 ? "s": ""}`;
         }
-
         if (seconds >= 3600) {
             return result;
         } else {
@@ -130,7 +109,6 @@
       );
         }
     }
-
     function getUnique(array) {
         var uniqueArray = [];
         for (var value of array) {
@@ -140,11 +118,8 @@
         }
         return uniqueArray;
     }
-
     // all item types: ['Temporary', 'Plushie', 'Alcohol', 'Primary', 'Melee', 'Other', 'Clothing', 'Secondary', 'Flower', 'Defensive', 'Drug', 'Electronic', 'Enhancer', 'Medical']
-
     var itemsAllList = {'items': {'Temporary': {'Claymore Mine': '229', 'Trout': '616', 'HEG': '242', 'Grenade': '220', 'Stick Grenade': '221', 'Throwing Knife': '257', 'Tear Gas': '256', 'Flash Grenade': '222', 'Ninja Stars': '239', 'Fireworks': '246', 'Smoke Grenade': '226'}, 'Plushie': {'Jaguar Plushie': '258', 'Stingray Plushie': '618', 'Wolverine Plushie': '261', 'Red Fox Plushie': '268', 'Nessie Plushie': '266', 'Monkey Plushie': '269', 'Chamois Plushie': '273', 'Panda Plushie': '274', 'Camel Plushie': '384', 'Lion Plushie': '281'}, 'Alcohol': {'Bottle of Tequila': '426', 'Bottle of Saké': '294'}, 'Primary': {'ArmaLite M-15A4 Rifle': '399', '9mm Uzi': '108', 'AK-47': '26', 'SIG 550': '232', 'Minigun': '63', 'M249 PARA LMG': '31', 'Heckler & Koch SL8': '231', 'Tavor TAR-21': '612', 'Ithaca 37': '252', 'Anti Tank': '240', 'Bushmaster Carbon 15 Type 21s': '241', 'Enfield SA-80': '219', 'SIG 552': '398', 'Jackhammer': '223', 'SKS Carbine': '249', 'Gold Plated AK-47': '382', 'Pink Mac-10': '388', 'Mag 7': '225', 'Vektor CR-21': '228'}, 'Melee': {'Samurai Sword': '11', 'Taser': '175', 'Ninja Claws': '111', 'Leather Bullwhip': '110', 'Axe': '8', 'Naval Cutlass': '615', 'Diamond Bladed Knife': '614', 'Ice Pick': '402', 'Cricket Bat': '438', 'Flail': '397', 'Frying Pan': '439', 'Claymore Sword': '217', 'Macana': '391', 'Swiss Army Knife': '224', 'Kodachi Swords': '237', 'Sai': '238', 'Kama': '236', 'Wooden Nunchakus': '235', 'Metal Nunchakus': '395', 'Chain Whip': '234', 'Wushu Double Axes': '251', 'Bo Staff': '245', 'Guandao': '400', 'Katana': '247', 'Twin Tiger Hooks': '250', 'Pillow': '440', 'Handbag': '387', 'Spear': '227', 'Knuckle Dusters': '4'}, 'Other': {'Mayan Statue': '259', 'Yucca Plant': '409', 'Blank Tokens': '327', 'Bolt Cutters': '159', 'Crazy Straw': '432', 'Nodding Turtle': '620', 'Steel Drum': '619', 'Hockey Stick': '262', 'Blank Credit Cards': '328', 'Fire Hydrant': '410', 'Pele Charm': '265', 'Dart Board': '431', 'Ship in a Bottle': '415', 'Sextant': '408', 'Tailors Dummy': '418', 'Paper Weight': '416', 'Model Space Ship': '411', 'Compass': '407', 'Soccer Ball': '270', 'Snowboard': '436', 'Sensu': '433', 'Maneki Neko': '279', 'Sumo Doll': '427', 'Chopsticks': '429', 'Yakitori Lantern': '434', 'Printing Paper': '326', 'Stick of Dynamite': '335', 'Jade Buddha': '275', 'Afro Comb': '406', 'Elephant Statue': '280'}, 'Clothing': {'Trench Coat': '107', 'Wetsuit': '625', 'Speedo': '623', 'Diving Gloves': '626', 'Flippers': '622', 'Bikini': '624', 'Snorkel': '621', 'Mountie Hat': '413', 'Coconut Bra': '430', 'Kabuki Mask': '278', 'Sports Shades': '412', 'Proda Sunglasses': '414'}, 'Defensive': {'Outer Tactical Vest': '50', 'Kevlar Gloves': '640', 'Flak Jacket': '178', 'Safety Boots': '645', 'WWII Helmet': '641', 'Liquid Body Armor': '333', 'Flexible Body Armor': '334', 'Construction Helmet': '643', 'Combat Pants': '652', 'Combat Helmet': '651', 'Combat Gloves': '654', 'Combat Vest': '332', 'Combat Boots': '653'}, 'Secondary': {'Springfield 1911-A1': '99', 'Flare Gun': '230', 'Cobra Derringer': '177', 'Desert Eagle': '20', 'Harpoon': '613', 'Lorcin 380': '253', 'S&W M29': '254', 'Taurus': '243', 'Crossbow': '218', 'Flamethrower': '255', 'BT MP9': '233', 'Blowgun': '244', 'Qsz-92': '248'}, 'Flower': {'Dahlia': '260', 'Banana Orchid': '617', 'Crocus': '263', 'Orchid': '264', 'Heather': '267', 'Ceibo Flower': '271', 'Edelweiss': '272', 'Dozen White Roses': '435', 'Cherry Blossom': '277', 'Peony': '276', 'Tribulus Omanense': '385', 'African Violet': '282'}, 'Drug': {'Ecstasy': '197', 'Cannabis': '196', 'Vicodin': '205', 'PCP': '201', 'Xanax': '206', 'Ketamine': '198', 'Shrooms': '203', 'Speed': '204', 'LSD': '199', 'Opium': '200'}, 'Enhancer': {'Medium Suitcase': '420', 'Small Suitcase': '419', 'Large Suitcase': '421', 'Sports Sneakers': '386'}, 'Medical': {'Neumune Tablet': '361'}, 'Electronic': {'Platinum PDA': '383', 'Gold Laptop': '381'}}};
-
     function getItemType(arg) {
         for (let p in itemsAllList["items"]) {
             for (let k in itemsAllList["items"][p]) {
@@ -236,9 +211,7 @@
                     dict.quantity = amount;
                     item.push(dict);
                 }
-
                 obj.items = item;
-                //console.log(obj);
                 sendData(obj);
             }
         }
@@ -309,7 +282,6 @@
         let data = sessionStorage.getItem('hardy_travel_data');
         if (typeof data == "undefined" || data == null) {
             getData();
-            //createTable();
         } else if (data == 'nope') {
             $(".hardy_travel_data_table")[0].innerHTML = '<p class="hardy_label">The requested data is not currently available. Kindly check again after a few minutes. </p>';
         } else {
@@ -373,6 +345,7 @@
             }
         }
     }
+    
     if (window.location.href.includes("travelagency.php")) {
         hideDoctorn();
         addHtmlBox();
@@ -380,7 +353,6 @@
         createTable();
         console.log("Created Table");
     }
-
 
     document.addEventListener("click", function(g) {
         if (g.target.className == "hardy_travel_sortable_header") {
@@ -447,7 +419,6 @@
                     country_array_save.push(upperCase);
                 }
             }
-            //console.log(2);
             let types_save = [];
             let type_boxes = $("#type_checkboxes")[0].children;
             for (var hj = 0; hj < type_boxes.length; hj++) {
@@ -464,9 +435,7 @@
             document.getElementById("travel_option_msg").innerHTML = '<p class="hardy_label">Settings Saved</p>';
             console.log("Settings Saved");
         }
-
     });
-
     //adding CSS to page
     GM_addStyle(`
     .hardy_travel_items_box, .hardy_abroad_msg, #country_checkboxes, #type_checkboxes { border-radius: 8px; background-color: rgb(242, 242, 242); box-shadow: 0px 4px 9px 3px rgba(119, 119, 119, 0.64); -moz-box-shadow: 0px 4px 9px 3px rgba(119, 119, 119, 0.64); -webkit-box-shadow: 0px 4px 9px 3px rgba(119, 119, 119, 0.64); padding. 10px;}
