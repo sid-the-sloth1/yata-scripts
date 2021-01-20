@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Abroad Items Info (Yata API)
 // @namespace    hardy.yata.abroad
-// @version      2.0
+// @version      2.1
 // @description  Updates Yata Database and shows Items on Travel Agency page
 // @author       Hardy[2131687]
 // @match        https://www.torn.com/travelagency.php*
@@ -163,8 +163,8 @@
             url: "https://yata.yt/api/v1/travel/import/",
             onload: function(e) {
                 let text = JSON.parse(e.responseText);
-                console.log(e);
-                if (e.statusText == "OK") {
+               // console.log(e);
+                if (e.status ==  200) {
                     msg_box.innerHTML = '<p class="hardy_label">Successfully updated Yata!!</p><button class="hardy_travel_max">Max</button>';
                     console.log(text);
                 } else {
