@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Abroad Items Info (Yata API)
 // @namespace    hardy.yata.abroad
-// @version      1.5
+// @version      2.0
 // @description  Updates Yata Database and shows Items on Travel Agency page
 // @author       Hardy[2131687]
 // @match        https://www.torn.com/travelagency.php*
@@ -9,7 +9,7 @@
 // @updateURL    https://raw.githubusercontent.com/sid-the-sloth1/yata-scripts/master/abroad_items.user.js
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
-// @connect      yata.alwaysdata.net
+// @connect      yata.yt
 // ==/UserScript==
 
 (function() {
@@ -160,7 +160,7 @@
             headers: {
                 "content-type": "application/json",
             },
-            url: "https://yata.alwaysdata.net/api/v1/travel/import/",
+            url: "https://yata.yt/api/v1/travel/import/",
             onload: function(e) {
                 let text = JSON.parse(e.responseText);
                 console.log(e);
@@ -257,7 +257,7 @@
         GM_xmlhttpRequest({
             method: 'GET',
             timeout: 20000,
-            url: 'https://yata.alwaysdata.net/api/v1/travel/export/',
+            url: 'https://yata.yt/api/v1/travel/export/',
             responseType: 'json',
             onload: function(e) {
                 try {
